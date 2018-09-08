@@ -1,0 +1,15 @@
+{
+	"description": "网黑小程序",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"appid": "wxa9f7ce6aee5ac4ee",
+	"projectname": "mini-wanghei",
+	"miniprogramRoot": "./dist",
+	"condition": {}
+}

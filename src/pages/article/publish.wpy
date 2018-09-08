@@ -1,0 +1,25 @@
+<template>
+<view class="publish-con">
+
+</view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class Publish extends wepy.page {
+	config = {
+        navigationBarTitleText: '网黑-发布'
+	};
+	
+	data = {
+
+	};
+} 
+</script>
+
+<style lang="less">
+.publish-con {
+
+}
+</style>

@@ -1,0 +1,140 @@
+<template>
+<view class="detail-con">
+	<view class="hd">
+		<image class="face" src="../../static/img/default-face.png"></image>
+		<view class="info">
+			<text class="name">司马迁</text>
+			<text class="desc">3分钟前</text>
+		</view>
+	</view>
+	<view class="bd">
+		<view class="detail">
+			<blockinfo :info="info" :islist="false"></blockinfo>
+		</view>
+		<view class="comment-box">
+			<view class="comment-title">热门评论</view>
+			<view class="comment-list">
+				<repeat for="{{ comments }}" item="item" key="item.id">
+					<commentitem :comment="item"></commentitem>
+				</repeat>
+			</view>
+		</view>
+		<view class="comment-box">
+			<view class="comment-title">全部评论</view>
+			<view class="comment-list">
+				<repeat for="{{ comments }}" item="item" key="item.id">
+					<commentitem :comment="item"></commentitem>
+				</repeat>
+			</view>
+		</view>
+	</view>
+	<view class="bottom-reply">
+		<input class="reply-input" placeholder='我也说两句…' type='text'></input>
+	</view>
+</view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import BlockInfo from '../../components/blockinfo';
+import CommentItem from '../../components/commentitem';
+
+export default class Detail extends wepy.page {
+    components = {
+        blockinfo: BlockInfo,
+		commentitem: CommentItem
+    };
+
+    data = {
+       info: {},
+	   comments: [
+		   { id: 1 },
+		   { id: 2 }
+	   ]
+    };
+
+    computed = {
+        
+    };
+
+    methods = {
+        navItemTap: function(id) {
+            this.selectedNav = id;
+        }
+    };
+
+    onLoad() {
+        
+    }
+}
+</script>
+
+<style lang="less">
+.detail-con {
+	background-color: #ECECEC;
+	min-height: 100vh;
+	padding-bottom: 100rpx;
+	.hd {
+		display: flex;
+		justify-content: center;
+		padding: 20rpx 20rpx;
+		background-color: #000;
+		.face {
+			margin-right: 15rpx;
+			width: 80rpx;
+			height: 80rpx;
+			border-radius: 50%;
+		}
+		.info {
+			display: flex;
+			flex: 1;
+			flex-direction: column;
+			justify-content: center;
+			.name {
+				font-size: 28rpx;
+				color: #fff;
+				line-height: 40rpx;
+			}
+			.desc {
+				font-size: 20rpx;
+				color: #EDEDED;
+				line-height: 28rpx;
+			}
+		}
+	}
+	.bd {
+		.detail {
+			margin-bottom: 20rpx;
+		}
+		.comment-box {
+			padding-left: 20rpx;
+			background-color: #fff;
+			margin-bottom: 20rpx;
+			.comment-title {
+				height: 85rpx;
+				line-height: 85rpx;
+				border-bottom: 1rpx solid #E9E9E9;
+				font-size: 28rpx;
+				color: #000;
+			}
+		}
+	}
+	.bottom-reply {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 80rpx;
+		line-height: 80rpx;
+		padding: 15rpx 20rpx;
+		background-color: #ECECEC;
+	}
+	.bottom-reply .reply-input {
+		height: 100%;
+		background-color:#fff;
+		padding:0 20rpx;
+		border-radius:10rpx;
+		font-size:26rpx;
+	}
+}
+</style>

@@ -1,0 +1,132 @@
+<template>
+<view class="comment-con">
+	<view class="comment">
+        <view class="face"><image src='../static/img/face.png'></image></view>
+        <view class="info">
+			<view class="hd">
+				<view class="left">
+					<text class="name">司马迁</text>
+					<text class="desc">作者 5分钟前</text>
+				</view>
+				<view class="right">
+					<text>999+</text>
+					<image class='btn' src='../static/img/icon-up.png'></image>
+					<image class='btn' src='../static/img/icon-down.png'></image>
+				</view>
+			</view>
+			<text class="text">现在的骗子真可恶，还要提醒大家多多提防，以免被骗。</text>
+			<view class="reply-box">
+				<view class="reply">
+					司马光 回复 司马迁：是的，最近骗子越来越猖狂了，到处行骗
+					<text class="time">3分钟前</text>
+				</view>
+				<view class="reply">
+					司马光 回复 司马迁：是的，最近骗子越来越猖狂了，到处行骗
+					<text class="time">3分钟前</text>
+				</view>
+			</view>
+        </view>
+	</view>
+</view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class CommentItem extends wepy.component {
+	props = {
+		comment: {}
+	}
+	data = {
+
+	}
+	methods = {
+		
+	}
+}
+</script>
+
+<style lang="less">
+.comment-con {
+	.comment {
+		display: flex;
+		padding: 20rpx 0;
+		flex-direction: row;
+		justify-content: space-between;
+		border-bottom: 1rpx solid #E9E9E9;
+		.face {
+			width: 60rpx;
+			height: 60rpx;
+			margin-right: 20rpx;
+			image {
+				height: 60rpx;
+				width: 60rpx;
+			}
+		}
+		.info {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			.hd {
+				display: flex;
+				padding: 0 40rpx 0 0;
+				flex: 1;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-between;
+				background-color: #fff;
+				.left {
+					display: flex;
+					flex-direction: column;
+				}
+				.name {
+					font-size: 24rpx;
+					color: #000000;
+					line-height: 32rpx;
+				}
+				.desc {
+					height: auto;
+					font-size: 20rpx;
+					color: #9B9B9B;
+					line-height: 28rpx;
+				}
+				.right {
+					display: flex;
+					flex-direction: row;
+					font-size: 22rpx;
+					color: #4A4A4A;
+					line-height: 42rpx;
+					.btn {
+						height: 40rpx;
+						width: 40rpx;
+						margin-left: 15rpx;
+					}
+				}
+			}
+			.text {
+				padding: 15rpx 20rpx 15rpx 0;
+				font-size: 26rpx;
+				color: #000000;
+				line-height: 40rpx;
+				// text-align: justify;
+			}
+			.reply-box {
+				margin: 15rpx 20rpx 5rpx 0;
+				padding: 10rpx 20rpx;
+				background-color: #F8F8F8;
+				.reply {
+					margin: 15rpx 0;
+					font-size: 24rpx;
+					color: #000000;
+					line-height: 34rpx;
+					// text-align: justify;
+					.time {
+						font-size: 20rpx;
+						color: #9B9B9B;
+						margin-left: 10rpx;
+					}
+				}
+			}
+		}
+	} 
+}
+</style>

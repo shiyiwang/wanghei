@@ -1,0 +1,89 @@
+<template>
+<view class="search-con">
+	<view class="hd">
+		<view class="input-box">
+			<input class="input" placeholder='输入关键字' type='text'></input>
+			<view class="cancel-btn" @tap="cancelTap">取消</view>
+		</view>
+	</view>
+	<view class="bd">
+		<view class="title">热搜内容</view>
+		<view class="hot-list">
+			<view class="item"><text class="color">#</text><text>P2P网贷</text></view>
+			<view class="item"><text class="color">#</text><text>P2P网贷</text></view>
+			<view class="item"><text class="color">#</text><text>P2P网贷</text></view>
+			<view class="item"><text class="color">#</text><text>P2P网贷</text></view>
+		</view>
+	</view>
+</view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class Search extends wepy.page {
+	methods = {
+		cancelTap: () => {
+			wx.navigateBack();
+		}
+	}
+}
+</script>
+
+<style lang="less">
+.search-con {
+	.hd {
+		padding: 20rpx 15rpx 35rpx 15rpx;
+		background-color: #000;
+		overflow: hidden;
+		.input-box {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			height: 70rpx;
+			background-color: #fff;
+			border-radius: 35rpx;
+			overflow: hidden;
+			.input {
+				flex: 1;
+				padding-left: 30rpx;
+				height: 50rpx;
+				line-height: 50rpx;
+				font-size: 26rpx;
+				color: #000;
+			}
+			.cancel-btn {
+				padding: 0 30rpx;
+				font-size: 26rpx;
+				color: #FF595E;
+			}
+		}
+	}
+	.bd {
+		.title {
+			padding: 30rpx 20rpx;
+			font-size: 24rpx;
+			line-height: 42rpx;
+			color: #9B9B9B;
+		}
+		.hot-list {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			padding: 10rpx 20rpx;
+			.item {
+				padding: 10rpx 20rpx 10rpx 0;
+				width: 46%;
+				font-size: 26rpx;
+				color: #4A4A4A;
+				line-height: 38rpx;
+				.color {
+					margin-right: 8rpx;
+					color: #D0021B;
+				}
+			}
+		}
+	}
+}
+</style>

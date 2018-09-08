@@ -1,0 +1,91 @@
+<template>
+<view class="type-con">
+    <view class="hd">
+        <text class="title">#TZJ维权#</text>
+        <image class="bg" src="../../static/img/hd-bg.png"></image>
+    </view>
+    <view class="bd">
+        <repeat for="{{ dataList }}" item="item" key="item.id">
+            <blockinfo :info="item" :islist="true"></blockinfo>
+        </repeat>
+    </view>
+    <view class="bottm-line">总该有底线</view>
+</view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import BlockInfo from '../../components/blockinfo';
+
+export default class Type extends wepy.page {
+    config = {
+        navigationBarTitleText: '网黑'
+    };
+    components = {
+        blockinfo: BlockInfo
+    };
+
+    data = {
+        navList: [
+            { id: 1, name: '最新' },
+            { id: 2, name: '热门' },
+            { id: 3, name: 'P2P' }
+        ],
+        selectedNav: 1,
+        dataList: [
+            { id: 1 },
+            { id: 2 },
+            { id: 3 },
+            { id: 4 }
+        ]
+    };
+
+    computed = {
+        
+    };
+
+    methods = {
+        navItemTap: function(id) {
+            this.selectedNav = id;
+        }
+    };
+
+    onLoad() {
+        
+    }
+}
+</script>
+
+<style lang="less">
+.type-con {
+    .hd {
+        position: relative;
+        padding-bottom: 22rpx;
+        background-color: #000;
+        overflow: hidden;
+        .title {
+            padding: 20rpx 20rpx 30rpx 20rpx;
+            height: 80rpx;
+            line-height: 80rpx;
+            font-size: 50rpx;
+            color: #fff;
+        }
+        .bg {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 22rpx;
+            width: 100%;
+        }
+    }
+    .bottm-line {
+        margin-top: -15rpx;
+        height: 80rpx;
+        line-height: 80rpx;
+        font-size: 26rpx;
+        color: #000;
+        text-align: center;
+    }
+}
+</style>

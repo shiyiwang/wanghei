@@ -1,0 +1,150 @@
+<template>
+<view class="block">
+	<view class="item">
+		<view class="title">
+			<navigator class="link" url="{{islist ? '/pages/home/type' : ''}}">#诈骗手法揭露#</navigator>
+			<navigator class="content" url="{{islist ? '/pages/home/detail' : ''}}">昨天有声称京东贷款的人给我打电话，说可以给我10万元的贷款额度，但是需要先给他支付1000块钱，作为还款能力的证明。</navigator>
+		</view>
+		<view class="imgs">
+			<image @tap="imgTap" wx:for="{{ imgList }}" wx:key="item" src="{{item}}" data-src="{{item}}" mode="aspectFill"></image>
+		</view>
+		<view class="desc">
+			<view class="tag">精选</view>
+			<view class="btns">
+			<view class="btn comment-btn" @tap="commentTap">
+				<image src="../static/img/icon-comment.png"></image>
+				<view class="num">999+</view>
+			</view>
+			<view class="btn like-btn" @tap="likeTap">
+				<image src="../static/img/icon-like.png"></image>
+				<view class="num">999+</view>
+			</view>
+			</view>
+		</view>
+	</view>
+</view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class BlockInfo extends wepy.component {
+	props = {
+		info: {},
+		islist: {
+			type: String
+		}
+	}
+	data = {
+		imgList: [
+			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
+			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
+			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
+			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
+			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
+			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png'
+		]
+	}
+	methods = {
+		imgTap: (e) => {
+			wx.previewImage({
+				current: e.target.dataset.src,
+				urls: this.imgList
+			})
+		},
+		commentTap: () => {
+			wx.showToast({
+				icon: 'none',
+				title: '你是想评论吗？',
+				duration: 2000
+			})
+		},
+		likeTap: () => {
+			wx.showToast({
+				icon: 'none',
+				title: '你是想点赞吗？',
+				duration: 2000
+			})
+		}
+	}
+}
+</script>
+
+<style lang="less">
+.block {
+	.item {
+		padding: 20rpx;
+		margin-bottom: 20rpx;
+		background-color: #fff;
+		border-bottom: 1rpx solid #E9E9E9;
+		.title {
+			font-size: 32rpx;
+			color: #000;
+			line-height: 48rpx;
+			text-align: justify;
+			.link {
+				display: inline-block;
+				margin-right: 10rpx;
+				color: #FF595E;
+			}
+			.content {
+				display: inline;
+			}
+		}
+		.imgs {
+			padding: 20rpx 0;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			flex-wrap: wrap;
+			image {
+				margin: 10rpx 14rpx;
+				width: 205rpx;
+				height: 300rpx;
+				border: 1rpx solid #eee;
+			}
+		}
+		.desc {
+			padding: 15rpx 0 5rpx 0;
+			height: 60rpx;
+			line-height: 60rpx;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			.tag {
+				display: inline-block;
+				padding: 15rpx 26rpx;
+				font-size: 24rpx;
+				color:#fff;
+				line-height: 24rpx;
+				border-radius: 10rpx;
+				background: radial-gradient(circle,#585858,#000000);;
+				box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
+			}
+			.btns {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				.btn {
+					position: relative;
+					margin: 0 30rpx;
+					image {
+						width: 50rpx;
+						height: 50rpx;
+						vertical-align: top;
+					}
+					.num {
+						position: absolute;
+						top: -5rpx;
+						right: -30rpx;
+						padding: 0 5rpx;
+						background-color: #fff;
+						font-size: 22rpx;
+						line-height: 22rpx;
+						color: #000;
+					}
+				}
+			}
+		}
+	}
+}
+</style>

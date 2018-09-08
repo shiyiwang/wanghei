@@ -1,0 +1,93 @@
+<template>
+<view class="bind-con">
+	<view class="title">绑定手机号</view>
+	<view class="title-desc">为规范发布内容，需完成个人手机号的绑定</view>
+	<view class="form">
+		<view class="form-item">
+			<text class="label">手机号</text>
+			<input class="input" placeholder='请输入个人手机号' type='text'></input>
+		</view>
+		<view class="form-item">
+			<text class="label">验证码</text>
+			<input class="input" placeholder='请输入短信验证码' type='text'></input>
+			<text class="r-btn">点击获取</text>
+		</view>
+	</view>
+	<view class="submit-btn" @tap="submit">提交 ></view>
+</view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class BindMobile extends wepy.page {
+	config = {
+		navigationBarTitleText: '网黑-绑定手机号'
+	};
+	
+	methods = {
+		submit: () => {
+			wx.navigateTo({
+				url: '/pages/article/publish'
+			});
+		}
+	}
+}
+</script>
+
+<style lang="less">
+.bind-con {
+	.title {
+		padding: 50rpx 20rpx 10rpx;
+		font-size: 55rpx;
+		color: #000;
+		line-height: 65rpx;
+	}
+	.title-desc {
+		padding: 10rpx 20rpx;
+		font-size: 24rpx;
+		color: #4A4A4A;
+		line-height: 32rpx;
+	}
+	.form {
+		margin: 20rpx 0;
+		padding-left: 20rpx;
+		border-top: 1rpx solid #E9E9E9;
+		border-bottom: 1rpx solid #E9E9E9;
+		.form-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 25rpx 20rpx;
+			border-bottom: 1rpx solid #E9E9E9;
+			.label {
+				width: 100rpx;
+				font-size: 28rpx;
+				color: #000;
+			}
+			.input {
+				padding: 0 20rpx;
+				flex: 1;
+				font-size: 28rpx;
+				color: #000;
+			}
+			.r-btn {
+				font-size: 28rpx;
+				color: #4A90E2;
+			}
+		}
+		.form-item:last-child {
+			border-bottom: 0;
+		}
+	}
+	.submit-btn {
+		width: 100rpx;
+		height: 50rpx;
+		line-height: 50rpx;
+		margin: 40rpx auto;
+		font-size: 28rpx;
+		color: #FF595E;
+		text-align: center;
+	}
+}
+</style>
