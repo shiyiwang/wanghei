@@ -9,9 +9,9 @@
 					<text class="desc">作者 5分钟前</text>
 				</view>
 				<view class="right">
-					<text>999+</text>
-					<image class='btn' src='../static/img/icon-up.png'></image>
-					<image class='btn' src='../static/img/icon-down.png'></image>
+					<view class="link-btn">1000 赞同</view>
+					<view class="dot"> · </view>
+					<view class="link-btn">1000 回复</view>
 				</view>
 			</view>
 			<text class="text">现在的骗子真可恶，还要提醒大家多多提防，以免被骗。</text>
@@ -84,6 +84,7 @@ export default class CommentItem extends wepy.component {
 					line-height: 32rpx;
 				}
 				.desc {
+					padding-top: 5rpx;
 					height: auto;
 					font-size: 20rpx;
 					color: #9B9B9B;
@@ -93,12 +94,10 @@ export default class CommentItem extends wepy.component {
 					display: flex;
 					flex-direction: row;
 					font-size: 22rpx;
-					color: #4A4A4A;
+					color: #9B9B9B;
 					line-height: 42rpx;
-					.btn {
-						height: 40rpx;
-						width: 40rpx;
-						margin-left: 15rpx;
+					.dot {
+						padding: 0 10rpx;
 					}
 				}
 			}
@@ -128,5 +127,10 @@ export default class CommentItem extends wepy.component {
 			}
 		}
 	} 
+}
+.comment-con:last-child {
+	.comment {
+		border-bottom: 0;
+	}
 }
 </style>

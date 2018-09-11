@@ -9,7 +9,7 @@
 	},
 	"compileType": "miniprogram",
 	"appid": "wxa9f7ce6aee5ac4ee",
-	"projectname": "mini-wanghei",
+	"projectname": "wanghei",
 	"miniprogramRoot": "./dist",
 	"condition": {}
 }

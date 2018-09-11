@@ -8,6 +8,7 @@ export default class extends wepy.app {
             'pages/home/index',
             'pages/home/type',
             'pages/home/detail',
+            'pages/home/comment',
             'pages/search/index',
             'pages/mine/index',
             'pages/mine/bindmobile',
@@ -36,16 +37,24 @@ export default class extends wepy.app {
     }
 
     getUserInfo(cb) {
-        const that = this
         if (this.globalData.userInfo) {
-        return this.globalData.userInfo
+            return this.globalData.userInfo
         }
-        wepy.getUserInfo({
-        success (res) {
-            that.globalData.userInfo = res.userInfo
-            cb && cb(res.userInfo)
-        }
-        })
+        // 查看是否授权
+        wx.getSetting({
+            success: res => {
+                if (res.authSetting['scope.userInfo']) {
+                // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+                    wx.getUserInfo({
+                        success: res2 => {
+                            this.globalData.userInfo = res2.userInfo;
+                            cb && cb(res2.userInfo);
+                            console.log(this.globalData);
+                        }
+                    })
+                }
+            }
+        });
     }
 }
 </script>

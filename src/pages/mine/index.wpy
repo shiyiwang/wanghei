@@ -1,22 +1,39 @@
 <template>
 <view class="mine-con">
-	<view class="hd">
-		<image class="face" src="{{ userInfo ? userInfo.avatarUrl : '../../static/img/default-face.png'  }}"></image>
+	<view class="hd" wx:if="{{ user_info !== null }}">
+		<view class="face-box">
+			<image class="face" src="{{ user_info.avatarUrl }}"></image>
+		</view>
 		<view class="info">
-			<view class="name">{{ userInfo ? userInfo.nickName : '无名氏' }}</view>
+			<view class="name">{{ user_info.nickName }}</view>
+			<view class="publish-btn" @tap="publishTap">发布 ></view>
+		</view>
+	</view>
+	<view class="hd" wx:else>
+		<view class="face-box">
+			<image class="face" src="/static/img/default-face.png"></image>
+		</view>
+		<view class="info">
+			<button wx:if="{{ canIUse}}" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo" class="login-btn">登录 ></button>
 			<view class="publish-btn" @tap="publishTap">发布 ></view>
 		</view>
 	</view>
 	<view class="bd">
-		<view class="tag">我的黑料</view>
-		<view class="my-list">
+		<view class="nav-list">
+			<view class="nav-item {{ navType === '1' ? 'active' : '' }}" bindtap="navTap('1')">我的黑料</view>
+			<view class="nav-item {{ navType === '2' ? 'active' : '' }}" bindtap="navTap('2')">我的收藏</view>
+		</view>
+		<view class="my-list" wx:if="{{ navType === '1' }}">
 			<navigator url="/pages/home/detail" class="item">原创 | #诈骗手法揭露# 昨天有声称京东贷款的人给我打电话，昨天有声称京东贷款的人给我打电话</navigator>
 			<navigator url="/pages/home/detail" class="item">原创 | #诈骗手法揭露# 昨天有声称京东贷款的人给我打电话，昨天有声称京东贷款的人给我打电话</navigator>
 			<navigator url="/pages/home/detail" class="item">原创 | #诈骗手法揭露# 昨天有声称京东贷款的人给我打电话，昨天有声称京东贷款的人给我打电话</navigator>
 		</view>
+		<view class="my-list" wx:if="{{ navType === '2' }}">
+			
+		</view>
 	</view>
 	<view class="bottom-bar">
-        <navigator url="/pages/home/index" class="item"><image src="../../static/img/icon-home.png"></image></navigator>
+        <navigator url="/pages/home/index" class="item" open-type="redirect"><image src="../../static/img/icon-home.png"></image></navigator>
         <view class="item active"><image src="../../static/img/icon-user.png"></image></view>
     </view>
 </view>
@@ -30,28 +47,40 @@ export default class Mine extends wepy.page {
 		navigationBarTitleText: '网黑-我的'
 	};
 
-	data = {
-		userInfo: null
+	data = { 
+		navType: '1',
+		canIUse: wx.canIUse('button.open-type.getUserInfo')
 	};
 
 	onLoad() {
 		if (!this.$parent.globalData.userInfo) {
-			const _self = this;
-			this.$parent.getUserInfo(() => {
-				_self.userInfo = _self.$parent.globalData.userInfo
-			})
-		}else {
-			this.userInfo = this.$parent.globalData.userInfo
+			this.$parent.getUserInfo();
 		}
-    };
+	};
+	
+	computed = {
+		user_info() {
+			return this.$parent.globalData.userInfo;
+		}
+	};
 
 	methods = {
 		publishTap: () => {
 			wx.navigateTo({
 				url: 'bindmobile'
 			});
+		},
+		navTap: (type) => {
+			this.navType = type;
+		},
+		bindGetUserInfo: res => {
+			if (res && res.detail) {
+				this.$parent.globalData.userInfo = res.detail.userInfo;
+			}
+
+			console.log(this.$parent.globalData);
 		}
-	}
+ 	}
 }
 </script>
 
@@ -63,11 +92,17 @@ export default class Mine extends wepy.page {
 		justify-content: space-between;
 		padding: 30rpx 30rpx 30rpx 20rpx;
 		background-color: #000;
-		.face {
+		.face-box {
 			width: 80rpx;
 			height: 80rpx;
 			margin-right: 15rpx;
 			border-radius: 50%;
+			overflow: hidden;
+			.face {
+				width: 80rpx;
+				height: 80rpx;
+				border-radius: 50%;
+			}
 		}
 		.info {
 			flex: 1;
@@ -84,20 +119,41 @@ export default class Mine extends wepy.page {
 				color: #fff;
 				line-height: 32rpx;
 			}
+			.login-btn {
+				margin:0;
+				padding:0;
+				font-size:24rpx;
+				background:transparent;
+				color:#fff;
+			}
 		}
 	}
 	.bd {
 		padding: 0 50rpx;
-		.tag {
-			display: inline-block;
-			margin: 40rpx 0;
-			padding: 15rpx 26rpx;
-			font-size: 24rpx;
-			color:#fff;
-			line-height: 24rpx;
-			border-radius: 10rpx;
-			background: radial-gradient(circle,#585858,#000000);;
-			box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
+		.nav-list {
+			margin-bottom: 20rpx;
+			margin-left: -25rpx;
+			height: 80rpx;
+			line-height: 80rpx;
+			background-color: #fff;
+			.nav-item {
+				position: relative;
+				display: inline-block;
+				font-size: 28rpx;
+				color: #000;
+				padding: 0 20rpx;
+				margin: 0 25rpx;
+			}
+			.nav-item.active::before {
+				position: absolute;
+				content: '';
+				bottom: 8rpx;
+				left: 0;
+				right: 0;
+				height: 6rpx;
+				background-color: #000;
+				box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
+			}
 		}
 		.my-list {
 			.item {
@@ -121,7 +177,7 @@ export default class Mine extends wepy.page {
         height: 150rpx;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(rgba(255,255,255,0),rgba(255, 255,255, 0.9));
+        background:linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.5));
         .item {
             display: flex;
             justify-content: center;

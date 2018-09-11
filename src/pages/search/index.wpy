@@ -9,10 +9,9 @@
 	<view class="bd">
 		<view class="title">热搜内容</view>
 		<view class="hot-list">
-			<view class="item"><text class="color">#</text><text>P2P网贷</text></view>
-			<view class="item"><text class="color">#</text><text>P2P网贷</text></view>
-			<view class="item"><text class="color">#</text><text>P2P网贷</text></view>
-			<view class="item"><text class="color">#</text><text>P2P网贷</text></view>
+			<view class="item" wx:for="{{ hotTopicList }}" wx:key="item">
+				<navigator class="link" url="/pages/home/type?id={{ item.id }}&name={{ item.name }}"><text class="color">#</text>{{ item.name }}</navigator>
+			</view>
 		</view>
 	</view>
 </view>
@@ -20,12 +19,40 @@
 
 <script>
 import wepy from 'wepy';
+import fetch from '../../utils/fetch';
 
 export default class Search extends wepy.page {
+	config = {
+        navigationBarTitleText: '搜索'
+	};
+
+	data = {
+		hotTopicList: []
+	};
+
+	onLoad() {
+        this.getHotTopic();
+	};
+
 	methods = {
 		cancelTap: () => {
 			wx.navigateBack();
 		}
+	};
+
+	getHotTopic() {
+		fetch.get({
+			url: '/v1/topic',
+			data: {
+				q: '',
+				h: 1
+			}
+		}, res => {
+			if (res && res.statusCode === 200 && res.data.status === 200) {
+				this.hotTopicList = res.data.data;
+				this.$apply();
+			}
+		})
 	}
 }
 </script>

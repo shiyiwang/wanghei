@@ -1,57 +1,69 @@
 <template>
 <view class="type-con">
     <view class="hd">
-        <text class="title">#TZJ维权#</text>
+        <text class="title">#{{ topic }}#</text>
         <image class="bg" src="../../static/img/hd-bg.png"></image>
     </view>
     <view class="bd">
-        <repeat for="{{ dataList }}" item="item" key="item.id">
+        <repeat for="{{ listData }}" item="item" key="item.id">
             <blockinfo :info="item" :islist="true"></blockinfo>
         </repeat>
     </view>
-    <view class="bottm-line">总该有底线</view>
+    <!-- <view class="bottm-line">总该有底线</view> -->
 </view>
 </template>
 
 <script>
 import wepy from 'wepy';
 import BlockInfo from '../../components/blockinfo';
+import fetch from '../../utils/fetch';
 
 export default class Type extends wepy.page {
     config = {
-        navigationBarTitleText: '网黑'
+        navigationBarTitleText: '网黑-话题'
     };
     components = {
         blockinfo: BlockInfo
     };
 
     data = {
-        navList: [
-            { id: 1, name: '最新' },
-            { id: 2, name: '热门' },
-            { id: 3, name: 'P2P' }
-        ],
-        selectedNav: 1,
-        dataList: [
-            { id: 1 },
-            { id: 2 },
-            { id: 3 },
-            { id: 4 }
-        ]
+        topic_id: '',
+        topic: '话题',
+        listData: []
     };
 
-    computed = {
-        
-    };
-
-    methods = {
-        navItemTap: function(id) {
-            this.selectedNav = id;
+    onLoad(options) {
+        if (!options.id) {
+            wx.showToast({
+                title: '话题ID不能为空',
+                duration: 2000,
+                icon: 'none'
+            });
         }
+        this.topic_id = options.id;
+        this.topic    = options.name;
+        this.getListData();
     };
 
-    onLoad() {
-        
+    getListData() {
+        wx.showLoading({
+            title: '加载中'
+        });
+        fetch.get({
+            url: 'v1/articles',
+            data: {
+                q: '',
+                page: 1,
+                f: 0,
+                t: this.topic_id
+            }
+        }, res => {
+            wx.hideLoading();
+            if (res && res.statusCode === 200) {
+                this.listData = res.data.data;
+                this.$apply();
+            }
+        })
     }
 }
 </script>
@@ -80,7 +92,7 @@ export default class Type extends wepy.page {
         }
     }
     .bottm-line {
-        margin-top: -15rpx;
+        margin-top: 40rpx;
         height: 80rpx;
         line-height: 80rpx;
         font-size: 26rpx;

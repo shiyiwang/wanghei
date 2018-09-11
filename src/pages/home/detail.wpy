@@ -1,35 +1,65 @@
 <template>
 <view class="detail-con">
-	<view class="hd">
-		<image class="face" src="../../static/img/default-face.png"></image>
-		<view class="info">
-			<text class="name">司马迁</text>
-			<text class="desc">3分钟前</text>
-		</view>
+	<view class="detail-nav">
+		<view class="nav-item {{ navType === 'detail' ? 'active' : '' }}" data-type="detail" bindtap="navTap">正文</view>
+		<view class="nav-item {{ navType === 'comment' ? 'active' : '' }}" data-type="comment" bindtap="navTap">评论</view>
 	</view>
-	<view class="bd">
-		<view class="detail">
-			<blockinfo :info="info" :islist="false"></blockinfo>
+	<view class="detail-bd">
+		<view class="detail" wx:if="{{ navType === 'detail' && detail.type === 2 }}">
+			<view class="content-hd">
+				<image class="face" src="{{ img_server + detail.member.avatar }}"></image>
+				<text class="name">{{ detail.member.name }}</text>
+				<view class="tag" wx:if="{{ detail.quality === 1 }}">精选</view>
+			</view>
+			<view class="content-desc">
+				<text>{{ detail.summary }}</text>
+			</view>
+			<view class="content-img">
+				<image class="img" wx:for="{{ detail.images }}" wx:key="item" src="{{ img_server + item}}" data-src="{{ img_server + item }}" mode="aspectFill"></image>
+			</view>
+			<view class="content-ft">
+				<navigator class="link" url="/pages/home/type?id={{ detail.topic_id }}&name={{ detail.topic }}">#{{ detail.topic }}#</navigator>
+			</view>
 		</view>
-		<view class="comment-box">
+		<view class="detail article" wx:if="{{ navType === 'detail' && detail.type === 1 }}">
+			<view class="article-hd">
+				<image class="article-img" src="{{ img_server + detail.member.avatar }}"></image>
+				<text class="author">{{ detail.member.name }}</text>
+				<view class="article-title">{{ detail.title }}</view>
+				<view class="tag" wx:if="{{ detail.quality === 1 }}">精选</view>
+			</view>
+			<view class="article-bd">
+				<htmlParser :parserName="name" :parserContent.sync="content"/>
+			</view>
+			<view class="content-ft" wx:if="{{ detail.topic !== '' }}">
+				<navigator class="link" url="/pages/home/type?id={{ detail.topic_id }}&name={{ detail.topic }}">#{{ detail.topic }}#</navigator>
+			</view>
+		</view>
+		<!-- <view class="comment-box" wx:if="{{ navType === 'comment' }}">
 			<view class="comment-title">热门评论</view>
 			<view class="comment-list">
-				<repeat for="{{ comments }}" item="item" key="item.id">
+				<repeat for="{{ detail.comment_list }}" item="item" key="item.id">
 					<commentitem :comment="item"></commentitem>
 				</repeat>
 			</view>
-		</view>
-		<view class="comment-box">
+		</view> -->
+		<view class="comment-box" wx:if="{{ navType === 'comment' }}">
 			<view class="comment-title">全部评论</view>
 			<view class="comment-list">
-				<repeat for="{{ comments }}" item="item" key="item.id">
+				<repeat for="{{ detail.comment_list }}" item="item" key="item.id">
 					<commentitem :comment="item"></commentitem>
 				</repeat>
+				<view class="empty" wx:if="{{ !detail.comment_list || detail.comment_list.length <= 0 }}">暂无评论</view>
 			</view>
 		</view>
 	</view>
-	<view class="bottom-reply">
-		<input class="reply-input" placeholder='我也说两句…' type='text'></input>
+	<view class="bottom-bar" wx:if="{{ navType === 'detail' }}">
+		<view class="bar-item" bindtap="likeTap">{{ isLike ? '取消赞同' : '表示赞同' }} · {{ likes }}</view>
+		<view class="bar-item" bindtap="showComment">看下评论 · {{ detail.comments }}</view>
+		<view class="bar-item" bindtap="collectTap">加入收藏 · 100</view>
+	</view>
+	<view class="bottom-reply" wx:if="{{ navType === 'comment' }}" bindtap="goComment">
+		<view class="reply-text">我也说两句…</view>
 	</view>
 </view>
 </template>
@@ -38,73 +68,266 @@
 import wepy from 'wepy';
 import BlockInfo from '../../components/blockinfo';
 import CommentItem from '../../components/commentitem';
+import htmlParser from '../../components/htmlparser';
+import fetch from '../../utils/fetch';
+import { config } from '../../config/index';
 
 export default class Detail extends wepy.page {
+	config = {
+        navigationBarTitleText: '网黑-详情'
+	};
+	
     components = {
         blockinfo: BlockInfo,
-		commentitem: CommentItem
+		commentitem: CommentItem,
+		htmlParser: htmlParser,
     };
 
     data = {
-       info: {},
-	   comments: [
-		   { id: 1 },
-		   { id: 2 }
-	   ]
-    };
+		id: '',
+		navType: 'detail',
+		detail: {},
+		name: 'myHtmlParserKiner1',
+		content: '',
+		isLike: false
+	};
+	
+	onLoad(options) {
+		if (!options.id) {
+            wx.showToast({
+                title: '文章ID不能为空',
+                duration: 2000,
+                icon: 'none'
+            });
+		}
+		
+		this.id = options.id;
+		this.getDetail(options.id);
+	}
 
     computed = {
-        
+        img_server() {
+			return config.img_server;
+		},
+		likes() {
+			return Number(this.detail.likes) + (this.isLike ? 1 : 0);
+		}
     };
 
     methods = {
         navItemTap: function(id) {
             this.selectedNav = id;
-        }
+		},
+		navTap: function(e) {
+			const type = e.target.dataset.type;
+			this.navType = type;
+		},
+		showComment: function() {
+			this.navType = 'comment';
+		},
+		goComment: () => {
+			wx.navigateTo({
+				url: '/pages/home/comment?id=' + this.id
+			})
+		},
+		likeTap: () => {
+			fetch.get({
+				url: 'v1/likes/' + this.id,
+				data: {
+					id: this.id
+				}
+			}, res => {
+				if (res && res.statusCode === 200 && res.data.status === 200) {
+					if (res.data.type == '1') {
+						this.isLike = true;
+						wx.showToast({
+							title: '赞同+1',
+							duration: 2000,
+							icon: 'success'
+						});
+					}else {
+						this.isLike = false;
+						wx.showToast({
+							title: '赞同-1',
+							duration: 2000,
+							icon: 'none'
+						});
+					}
+					this.$apply();
+				}else {
+					wx.showToast({
+						title: res.data.message || '操作失败',
+						duration: 2000,
+						icon: 'none'
+					});
+				}
+			})
+		},
+		collectTap: () => {
+			wx.showToast({
+				title: '功能待开放',
+				duration: 2000,
+				icon: 'none'
+			});
+		}
     };
 
-    onLoad() {
-        
-    }
+    getDetail(id) {
+		wx.showLoading({
+			title: '加载中'
+		});
+
+		fetch.get({
+			url: 'v1/articles/' + id,
+			data: {
+				id: id
+			}
+		}, res => {
+			wx.hideLoading();
+			if (res && res.statusCode === 200 && res.data.status === 200) {
+				this.detail = res.data.data;
+				this.content = res.data.data.content;
+				this.$apply();
+				this.$invoke('htmlParser', 'htmlParserNotice')
+			}else {
+				wx.showToast({
+					title: res.data.message,
+					duration: 2000,
+					icon: 'none'
+				});
+			}
+		});
+	}
 }
 </script>
 
 <style lang="less">
 .detail-con {
-	background-color: #ECECEC;
+	background-color: #fff;
 	min-height: 100vh;
 	padding-bottom: 100rpx;
-	.hd {
-		display: flex;
-		justify-content: center;
-		padding: 20rpx 20rpx;
-		background-color: #000;
-		.face {
-			margin-right: 15rpx;
-			width: 80rpx;
-			height: 80rpx;
-			border-radius: 50%;
+	.detail-nav {
+		height: 80rpx;
+		line-height: 80rpx;
+		background-color: #fff;
+		text-align: center;
+		.nav-item {
+			position: relative;
+			display: inline-block;
+			font-size: 28rpx;
+			color: #000;
+			padding: 0 20rpx;
+			margin: 0 35rpx;
 		}
-		.info {
-			display: flex;
-			flex: 1;
-			flex-direction: column;
-			justify-content: center;
-			.name {
-				font-size: 28rpx;
-				color: #fff;
-				line-height: 40rpx;
-			}
-			.desc {
-				font-size: 20rpx;
-				color: #EDEDED;
-				line-height: 28rpx;
-			}
+		.nav-item.active::before {
+			position: absolute;
+			content: '';
+			bottom: 8rpx;
+			left: 0;
+			right: 0;
+			height: 6rpx;
+			background-color: #000;
+			box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
 		}
 	}
-	.bd {
+	.detail-bd {
 		.detail {
-			margin-bottom: 20rpx;
+			padding: 20rpx;
+			.content-hd {
+				padding: 10rpx 0;
+				.face {
+					width: 60rpx;
+					height: 60rpx;
+					border-radius: 50%;
+					margin-right: 15rpx;
+					vertical-align: middle;
+				}
+				.name {
+					font-size: 24rpx;
+					color: #000;
+					line-height: 60rpx;
+					vertical-align: middle;
+				}
+				.tag {
+					float: right;
+					margin-top:7rpx;
+					padding: 15rpx 26rpx;
+					font-size: 24rpx;
+					color:#fff;
+					line-height: 24rpx;
+					border-radius: 10rpx;
+					background: radial-gradient(circle,#585858,#000000);;
+					box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
+				}
+			}
+			.content-desc {
+				padding: 15rpx 0;
+				font-size: 28rpx;
+				color: #000;
+				line-height: 42rpx;
+				text-align: justify;
+			}
+			.content-img {
+				.img {
+					display: block;
+					margin: 30rpx auto;
+					width: 80%;
+					box-shadow: 0 6rpx 12rpx rgba(0,0,0,0.14);
+				}
+			}
+			.content-ft {
+				padding: 20rpx;
+				border-top: 1rpx solid #D8D8D8;
+				font-size: 26rpx;
+				line-height: 42rpx;
+				color: #9B9B9B;
+				.link {
+					display: inline-block;
+					padding: 0 10rpx;
+				}
+			}
+			.article-hd {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 20rpx;
+				.article-img {
+					width: 50rpx;
+					height: 50rpx;
+				}
+				.author {
+					padding: 10rpx;
+					font-size: 24rpx;
+					color: #000;
+					line-height: 36rpx;
+				}
+				.article-title {
+					padding: 10rpx 0;
+					font-size: 34rpx;
+					color: #4A4A4A;
+					line-height: 48rpx;
+					text-align: center;
+				}
+				.tag {
+					margin-top: 30rpx;
+					padding: 12rpx 24rpx;
+					font-size: 22rpx;
+					color:#fff;
+					line-height: 22rpx;
+					border-radius: 10rpx;
+					background: radial-gradient(circle,#585858,#000000);;
+					box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
+				}
+			}
+			.article-bd {
+				margin-top: 20rpx;
+				padding: 20rpx 0;
+				font-size: 26rpx;
+				line-height: 42rpx;
+				text-align: justify;
+				border-top: 1rpx solid #D8D8D8;
+			}
 		}
 		.comment-box {
 			padding-left: 20rpx;
@@ -117,6 +340,30 @@ export default class Detail extends wepy.page {
 				font-size: 28rpx;
 				color: #000;
 			}
+			.empty {
+				padding: 50rpx 20rpx;
+				font-size: 28rpx;
+				color: #000;
+				text-align: center;
+			}
+		}
+	}
+	.bottom-bar {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 80rpx;
+		line-height: 80rpx;
+		background-color: #EFEFEF;
+		.bar-item {
+			flex: 1;
+			font-size: 24rpx;
+			color: #4A4A4A;
+			text-align: center;
 		}
 	}
 	.bottom-reply {
@@ -128,13 +375,14 @@ export default class Detail extends wepy.page {
 		line-height: 80rpx;
 		padding: 15rpx 20rpx;
 		background-color: #ECECEC;
-	}
-	.bottom-reply .reply-input {
-		height: 100%;
-		background-color:#fff;
-		padding:0 20rpx;
-		border-radius:10rpx;
-		font-size:26rpx;
+		.reply-text {
+			height: 100%;
+			background-color:#fff;
+			padding:0 20rpx;
+			border-radius:10rpx;
+			font-size:26rpx;
+			color: #9B9B9B;
+		}
 	}
 }
 </style>
