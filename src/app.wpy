@@ -68,4 +68,11 @@ export default class extends wepy.app {
     justify-content: space-between;
     box-sizing: border-box;
 }
+.empty {
+    padding: 15rpx;
+    font-size: 28rpx;
+    color: #333;
+    line-height: 36rpx;
+    text-align: center;
+}
 </style>

@@ -32,7 +32,8 @@ import fetch from '../../utils/fetch';
 
 export default class Index extends wepy.page {
     config = {
-        navigationBarTitleText: '网黑'
+        navigationBarTitleText: '网黑',
+        enablePullDownRefresh: true
     };
     components = {
         blockinfo: BlockInfo
@@ -44,6 +45,7 @@ export default class Index extends wepy.page {
             { id: 1, name: '热门' }
         ],
         selectedNav: 0,
+        page: 1,
         listData: []
     };
 
@@ -58,34 +60,64 @@ export default class Index extends wepy.page {
     methods = {
         navItemTap: id => {
             this.selectedNav = id;
-            this.getListData();
+            this.getListData(true);
         },
         searchTap: () => {
             wx.navigateTo({
 				url: '/pages/search/index'
 			});
-        }
+        },
     };
 
-    getListData() {
+    onPullDownRefresh() {
+        wepy.showNavigationBarLoading();
+        this.getListData(true, () => {
+            wepy.stopPullDownRefresh();
+            wepy.hideNavigationBarLoading();
+        });
+    }
+
+    onReachBottom() {
+        this.getListData(false, res => {
+            if (res && res.data && res.data.data.length == 0) {
+                wx.showToast({
+                    title: '没有更多了',
+                    icon: 'none'
+                })
+            }
+        })
+    }
+
+    getListData(refresh, cb) {
         wx.showLoading({
             title: '加载中'
         });
+
+        if (refresh) {
+            this.page = 1;
+        }
 
         fetch.get({
             url: 'v1/articles',
             data: {
                 q: '',
-                page: 1,
+                page: this.page++,
                 f: this.selectedNav,
                 t: ''
             }
         }, res => {
             wx.hideLoading();
             if (res && res.statusCode === 200) {
-                this.listData = res.data.data;
+                this.listData = refresh ? res.data.data : [...this.listData, ...res.data.data];
                 this.$apply();
+            }else {
+                wx.showToast({
+                    title: '加载失败',
+                    icon: 'none'
+                });
             }
+
+            cb && cb(res);
         })
     }
 }

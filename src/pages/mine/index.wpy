@@ -15,22 +15,26 @@
 		</view>
 		<view class="info">
 			<button wx:if="{{ canIUse}}" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo" class="login-btn">登录 ></button>
-			<view class="publish-btn" @tap="publishTap">发布 ></view>
+			<!-- <view class="publish-btn" @tap="publishTap">发布 ></view> -->
 		</view>
 	</view>
-	<view class="bd">
+	<view class="bd" wx:if="{{ user_info !== null }}">
 		<view class="nav-list">
 			<view class="nav-item {{ navType === '1' ? 'active' : '' }}" bindtap="navTap('1')">我的黑料</view>
 			<view class="nav-item {{ navType === '2' ? 'active' : '' }}" bindtap="navTap('2')">我的收藏</view>
 		</view>
 		<view class="my-list" wx:if="{{ navType === '1' }}">
+			<view class="empty" wx:if="{{ publicDataList.length === 0 }}">暂无数据</view>
+			<!-- <navigator url="/pages/home/detail" class="item">原创 | #诈骗手法揭露# 昨天有声称京东贷款的人给我打电话，昨天有声称京东贷款的人给我打电话</navigator>
 			<navigator url="/pages/home/detail" class="item">原创 | #诈骗手法揭露# 昨天有声称京东贷款的人给我打电话，昨天有声称京东贷款的人给我打电话</navigator>
-			<navigator url="/pages/home/detail" class="item">原创 | #诈骗手法揭露# 昨天有声称京东贷款的人给我打电话，昨天有声称京东贷款的人给我打电话</navigator>
-			<navigator url="/pages/home/detail" class="item">原创 | #诈骗手法揭露# 昨天有声称京东贷款的人给我打电话，昨天有声称京东贷款的人给我打电话</navigator>
+			<navigator url="/pages/home/detail" class="item">原创 | #诈骗手法揭露# 昨天有声称京东贷款的人给我打电话，昨天有声称京东贷款的人给我打电话</navigator> -->
 		</view>
 		<view class="my-list" wx:if="{{ navType === '2' }}">
-			
+			<view class="empty" wx:if="{{ collectDataList.length === 0 }}">暂无数据</view>
 		</view>
+	</view>
+	<view class="bd" wx:else>
+		<view class="no-login-text">您还没有登录呢</view>
 	</view>
 	<view class="bottom-bar">
         <navigator url="/pages/home/index" class="item" open-type="redirect"><image src="../../static/img/icon-home.png"></image></navigator>
@@ -49,7 +53,9 @@ export default class Mine extends wepy.page {
 
 	data = { 
 		navType: '1',
-		canIUse: wx.canIUse('button.open-type.getUserInfo')
+		canIUse: wx.canIUse('button.open-type.getUserInfo'),
+		publicDataList: [],
+		collectDataList: []
 	};
 
 	onLoad() {
@@ -77,8 +83,6 @@ export default class Mine extends wepy.page {
 			if (res && res.detail) {
 				this.$parent.globalData.userInfo = res.detail.userInfo;
 			}
-
-			console.log(this.$parent.globalData);
 		}
  	}
 }
@@ -130,6 +134,11 @@ export default class Mine extends wepy.page {
 	}
 	.bd {
 		padding: 0 50rpx;
+		.no-login-text {
+			padding:40rpx 20rpx;
+			font-size:30rpx;
+			text-align:center;
+		}
 		.nav-list {
 			margin-bottom: 20rpx;
 			margin-left: -25rpx;

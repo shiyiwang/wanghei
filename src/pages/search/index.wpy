@@ -2,11 +2,11 @@
 <view class="search-con">
 	<view class="hd">
 		<view class="input-box">
-			<input class="input" placeholder='输入关键字' type='text'></input>
+			<input class="input" placeholder='输入关键字' type='text' value="{{ keywords }}" bindinput="keywordInput" bindconfirm="keywordConfirm" confirm-type="搜索" />
 			<view class="cancel-btn" @tap="cancelTap">取消</view>
 		</view>
 	</view>
-	<view class="bd">
+	<view class="bd" wx-if="{{ isSearch === false }}">
 		<view class="title">热搜内容</view>
 		<view class="hot-list">
 			<view class="item" wx:for="{{ hotTopicList }}" wx:key="item">
@@ -14,20 +14,37 @@
 			</view>
 		</view>
 	</view>
+	<view class="bd" wx:else>
+		<view class="title">搜索结果</view>
+		<repeat for="{{ searchDataList }}" item="item" key="item.id">
+            <blockinfo :info="item" :islist="true"></blockinfo>
+        </repeat>
+		<view class="empty" wx:if="{{ searchDataList.length === 0 }}">暂无数据</view>
+	</view>
 </view>
 </template>
 
 <script>
 import wepy from 'wepy';
+import BlockInfo from '../../components/blockinfo';
 import fetch from '../../utils/fetch';
 
 export default class Search extends wepy.page {
 	config = {
-        navigationBarTitleText: '搜索'
+        navigationBarTitleText: '搜索',
+		enablePullDownRefresh: true
 	};
 
+	components = {
+        blockinfo: BlockInfo
+    };
+
 	data = {
-		hotTopicList: []
+		isSearch: false,
+		keywords: '',
+		page: 1,
+		hotTopicList: [],
+		searchDataList: []
 	};
 
 	onLoad() {
@@ -37,8 +54,33 @@ export default class Search extends wepy.page {
 	methods = {
 		cancelTap: () => {
 			wx.navigateBack();
+		},
+		keywordInput: e => {
+			this.keywords = e.detail.value;
+		},
+		keywordConfirm: () => {
+			this.isSearch = true;
+			this.getSearchList(true);
 		}
 	};
+
+	onPullDownRefresh() {
+		wepy.stopPullDownRefresh();
+        this.isSearch = false;
+		this.keywords = '';
+		this.$apply();
+    }
+
+	onReachBottom() {
+        this.getSearchList(false, res => {
+            if (res && res.data && res.data.data.length == 0) {
+                wx.showToast({
+                    title: '没有更多了',
+                    icon: 'none'
+                })
+            }
+        })
+    }
 
 	getHotTopic() {
 		fetch.get({
@@ -53,7 +95,40 @@ export default class Search extends wepy.page {
 				this.$apply();
 			}
 		})
-	}
+	};
+
+	getSearchList(refresh, cb) {
+		wx.showLoading({
+            title: '加载中'
+        });
+
+        if (refresh) {
+            this.page = 1;
+        }
+
+        fetch.get({
+            url: 'v1/articles',
+            data: {
+                q: this.keywords,
+                page: this.page++,
+                f: 0,
+                t: ''
+            }
+        }, res => {
+            wx.hideLoading();
+            if (res && res.statusCode === 200) {
+                this.searchDataList = refresh ? res.data.data : [...this.searchDataList, ...res.data.data];
+                this.$apply();
+            }else {
+                wx.showToast({
+                    title: '加载失败',
+                    icon: 'none'
+                });
+            }
+
+            cb && cb(res);
+        })
+	};
 }
 </script>
 

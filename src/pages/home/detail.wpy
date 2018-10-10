@@ -121,9 +121,15 @@ export default class Detail extends wepy.page {
 		navTap: function(e) {
 			const type = e.target.dataset.type;
 			this.navType = type;
+			wx.pageScrollTo({
+				scrollTop: 0
+			});
 		},
 		showComment: function() {
 			this.navType = 'comment';
+			wx.pageScrollTo({
+				scrollTop: 0
+			});
 		},
 		goComment: () => {
 			wx.navigateTo({
