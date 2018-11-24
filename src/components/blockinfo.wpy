@@ -2,25 +2,25 @@
 <view class="block">
 	<view class="item" wx:if="{{ info.type === 2 }}">
 		<view class="item-hd">
-			<image class="face" src="../static/img/default-face.png"></image>
-			<text class="name">司马迁</text>
-			<view class="tag">精选</view>
+			<image class="face" src="{{ info.member.avatar }}"></image>
+			<text class="name">{{ info.member.name }}</text>
+			<view class="tag" wx:if="{{ info.quality === 1 }}">精选</view>
 		</view>
 		<view wx:if="{{ islist === true }}" class="item-desc">
-			<text>昨天有声称京东贷款的人给我打电话，说可以给我10万元的贷款额度，但是需要先给他支付1000块钱，作为还款能力的证明。</text>
+			<text>{{ info.summary }}</text>
 		</view>
 		<navigator wx:else class="item-desc" url="/pages/home/detail">
-			<text>昨天有声称京东贷款的人给我打电话，说可以给我10万元的贷款额度，但是需要先给他支付1000块钱，作为还款能力的证明。</text>
+			<text>{{ info.summary }}</text>
 		</navigator>
 		<scroll-view class="imgs" scroll-x="true" style="width: 100%">
-			<image class="img" @tap="imgTap" wx:for="{{ imgList }}" wx:key="item" src="{{item}}" data-src="{{item}}" mode="aspectFill"></image>
+			<image class="img" @tap="imgTap" wx:for="{{ img_list }}" wx:key="item" src="{{item}}" data-src="{{item}}" mode="aspectFill"></image>
 		</scroll-view>
 		<view class="item-ft">
-			<text class="text">1000 赞同</text>
-			<text class="dot">  ·  </text>
-			<text class="text">1000 评论</text>
-			<text class="dot">  ·  </text>
-			<navigator class="link" url="/pages/home/type?id={{ info.id }}">#诈骗手法揭露#</navigator>
+			<text class="text">{{ info.likes }} 赞同</text>
+			<text class="dot">·</text>
+			<text class="text">{{ info.comments }} 评论</text>
+			<text class="dot">·</text>
+			<navigator class="link" url="/pages/home/type?id={{ info.topic_id }}&name={{ info.topic }}">#{{ info.topic }}#</navigator>
 		</view>
 	</view>
 	<view class="item article" wx:if="{{ info.type === 1 }}">
@@ -57,21 +57,14 @@ export default class BlockInfo extends wepy.component {
 		islist: {
 			type: String
 		}
-	}
-	data = {
-		imgList: [
-			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
-			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
-			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
-			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
-			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png',
-			'https://images.36jr.com/jr-cf/2018/07/09/30b341d70fe90c6d99b593957eeb9dea.png'
-		]
-	}
+	};
 
 	computed = {
 		img_server() {
 			return config.img_server;
+		},
+		img_list() {
+			return this.info  && this.info.images;
 		}
 	};
 
@@ -80,7 +73,7 @@ export default class BlockInfo extends wepy.component {
 		imgTap: (e) => {
 			wx.previewImage({
 				current: e.target.dataset.src,
-				urls: this.imgList
+				urls: this.img_list
 			})
 		},
 		commentTap: () => {
@@ -115,6 +108,7 @@ export default class BlockInfo extends wepy.component {
 				border-radius: 50%;
 				margin-right: 15rpx;
 				vertical-align: middle;
+				border: 1rpx solid #ccc;
 			}
 			.name {
 				font-size: 24rpx;

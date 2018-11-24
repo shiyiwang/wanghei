@@ -176,7 +176,15 @@ export default class Detail extends wepy.page {
 				icon: 'none'
 			});
 		}
-    };
+	};
+	
+	onShareAppMessage() {
+        return {
+            title: this.detail.title,
+            desc: this.detail.summary,
+            path: 'pages/home/detail?id=' + this.detail.id
+        }
+    }
 
     getDetail(id) {
 		wx.showLoading({
@@ -192,7 +200,8 @@ export default class Detail extends wepy.page {
 			wx.hideLoading();
 			if (res && res.statusCode === 200 && res.data.status === 200) {
 				this.detail = res.data.data;
-				this.content = res.data.data.content;
+				const content = res.data.data.content != '' ? res.data.data.content.replace(new RegExp('src=&quot;', "g"), 'src=&quot;' + this.img_server) : '';
+				this.content = content;
 				this.$apply();
 				this.$invoke('htmlParser', 'htmlParserNotice')
 			}else {

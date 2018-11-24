@@ -7,7 +7,7 @@
         <view class="search-box">
             <view class="search" @tap="searchTap">
                 <image class="icon" src="../../static/img/icon-search.png"></image>
-                <text>投之家维权进展</text>
+                <text>搜索黑料</text>
             </view>
         </view>
         <image class="bg" src="../../static/img/hd-bg.png"></image>
@@ -69,6 +69,13 @@ export default class Index extends wepy.page {
         },
     };
 
+    onShareAppMessage() {
+        return {
+            title: '网黑 | 天天看黑料',
+            path: 'pages/home/index'
+        }
+    }
+
     onPullDownRefresh() {
         wepy.showNavigationBarLoading();
         this.getListData(true, () => {
@@ -125,111 +132,111 @@ export default class Index extends wepy.page {
 
 <style lang="less">
 .home-con {
-    padding-bottom: 150rpx;
-    .hd {
+  padding-bottom: 150rpx;
+  .hd {
+    position: relative;
+    padding-bottom: 22rpx;
+    background-color: #000;
+    overflow: hidden;
+    .nav-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 80rpx;
+      .item {
         position: relative;
-        padding-bottom: 22rpx;
-        background-color: #000;
-        overflow: hidden;
-        .nav-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 80rpx;
-            .item {
-                position: relative;
-                padding: 10rpx 15rpx;
-                margin: 0 20rpx;
-                font-size: 28rpx;
-                color: #fff;
-                transition: all .3s linear;
-            }
-            .item.active:before {
-                position: absolute;
-                content: '';
-                left: 0;
-                right: 0;
-                height: 10rpx;
-                bottom: -10rpx;
-                border-radius: 10rpx;
-                background: linear-gradient(to right, #fff , #C0C0C0);
-                transition: all .3s linear;
-                transform: scale(0);
-            }
-            .item.active:before {
-                transform: scale(1);
-            }
-        }
-        .search-box {
-            padding: 30rpx 20rpx;
-            .search {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 70rpx;
-                line-height: 70rpx;
-                font-size: 26rpx;
-                color: #9B9B9B;
-                text-align: center;
-                background-color: #fff;
-                border-radius: 10rpx;
-                .icon {
-                    margin-right: 8rpx;
-                    width: 32rpx;
-                    height: 32rpx;
-                }
-            }
-        }
-        .bg {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 22rpx;
-            width: 100%;
-        }
-    }
-    .bottm-line {
-        margin-top: 40rpx;
-        height: 80rpx;
-        line-height: 80rpx;
-        font-size: 26rpx;
-        color: #000;
-        text-align: center;
-    }
-    .bottom-bar {
-        position: fixed;
-        display: flex;
-        bottom: 0;
+        padding: 10rpx 15rpx;
+        margin: 0 20rpx;
+        font-size: 28rpx;
+        color: #fff;
+        transition: all 0.3s linear;
+      }
+      .item.active:before {
+        position: absolute;
+        content: "";
         left: 0;
         right: 0;
-        height: 150rpx;
-        justify-content: center;
-        align-items: center;
-        background:linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.5));
-        .item {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 20rpx;
-            width: 64rpx;
-            height: 64rpx;
-            line-height: 64rpx;
-            text-align: center;
-            border-radius: 50%;
-            background-color: #76777A;
-            color: #fff;
-            box-shadow: 0 0 10px 2px rgba(48,56,65,0.7);
-            transition: all .4s linear;
-            image {
-                width: 35rpx;
-                height: 35rpx;
-            }
-        }
-        .item.active {
-            background-color: #000;
-            transform: scale(1.2);
-        }
+        height: 10rpx;
+        bottom: -10rpx;
+        border-radius: 10rpx;
+        background: linear-gradient(to right, #fff, #c0c0c0);
+        transition: all 0.3s linear;
+        transform: scale(0);
+      }
+      .item.active:before {
+        transform: scale(1);
+      }
     }
+    .search-box {
+      padding: 30rpx 20rpx;
+      .search {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 70rpx;
+        line-height: 70rpx;
+        font-size: 26rpx;
+        color: #9b9b9b;
+        text-align: center;
+        background-color: #fff;
+        border-radius: 10rpx;
+        .icon {
+          margin-right: 8rpx;
+          width: 32rpx;
+          height: 32rpx;
+        }
+      }
+    }
+    .bg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 22rpx;
+      width: 100%;
+    }
+  }
+  .bottm-line {
+    margin-top: 40rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    font-size: 26rpx;
+    color: #000;
+    text-align: center;
+  }
+  .bottom-bar {
+    position: fixed;
+    display: flex;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 150rpx;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.5));
+    .item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 20rpx;
+      width: 64rpx;
+      height: 64rpx;
+      line-height: 64rpx;
+      text-align: center;
+      border-radius: 50%;
+      background-color: #76777a;
+      color: #fff;
+      box-shadow: 0 0 10px 2px rgba(48, 56, 65, 0.7);
+      transition: all 0.4s linear;
+      image {
+        width: 35rpx;
+        height: 35rpx;
+      }
+    }
+    .item.active {
+      background-color: #000;
+      transform: scale(1.2);
+    }
+  }
 }
 </style>
