@@ -1,0 +1,41 @@
+<template>
+<view class="publish-con">
+	<view class="title">添加小哥哥微信，立即爆料</view>
+	<image class="qrcode" src="/static/img/publish-temp.png"></image>
+</view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class Publish extends wepy.page {
+	config = {
+		navigationBarTitleText: '网黑-爆料'
+	};
+	
+	methods = {
+		
+	}
+}
+</script>
+
+<style lang="less">
+.publish-con {
+	min-height: 80vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	.title {
+		font-size: 28rpx;
+		color: #4A4A4A;
+		line-height: 46px;
+		text-align: center;
+	}
+	.qrcode {
+		margin-top: 50rpx;
+		width: 550rpx;
+		height: 732rpx;
+	}
+}
+</style>

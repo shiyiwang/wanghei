@@ -2,11 +2,11 @@
 	<view class="comment-con">
 		<view class="comment-hd">
 			<view class="name">写评论</view>
-			<view class="submit-btn" bindtap="submit">提交 ></view>
 		</view>
 		<view class="comment-bd">
 			<textarea class="textarea" auto-focus placeholder="我有话要说…" bindconfirm="submit" bindinput="textareaInput" value="{{ value }}" />
 		</view>
+		<view class="submit-btn" bindtap="submit">提交</view>
 	</view>
 </template>
 
@@ -64,8 +64,9 @@ export default class Comment extends wepy.page {
 						duration: 2000,
 						icon: 'success'
 					});
-
-					wx.navigateBack();
+					setTimeout(() => {
+						wx.navigateBack();
+					}, 1000);
 				}else {
 					wx.showToast({
 						title: res.data.message || '评论失败',
@@ -82,7 +83,7 @@ export default class Comment extends wepy.page {
 
 <style lang="less">
 .comment-con {
-	padding: 0 20rpx;
+	padding: 0 30rpx;
 	.comment-hd {
 		display: flex;
 		align-items: center;
@@ -118,6 +119,16 @@ export default class Comment extends wepy.page {
 			font-size: 28rpx;
 			line-height: 42rpx;
 		}
+	}
+	.submit-btn {
+		display: inline-block;
+		padding: 18rpx 40rpx;
+		font-size: 26rpx;
+		color:#fff;
+		line-height: 26rpx;
+		border-radius: 10rpx;
+		background: radial-gradient(circle,#585858,#000000);;
+		box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
 	}
 }
 </style>

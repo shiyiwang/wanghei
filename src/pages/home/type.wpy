@@ -1,9 +1,6 @@
 <template>
 <view class="type-con">
-    <view class="hd">
-        <text class="title">#{{ topic }}#</text>
-        <image class="bg" src="../../static/img/hd-bg.png"></image>
-    </view>
+    <view class="hd">#{{ topic }}#</view>
     <view class="bd">
         <repeat for="{{ listData }}" item="item" key="item.id">
             <blockinfo :info="item" :islist="true"></blockinfo>
@@ -105,25 +102,10 @@ export default class Type extends wepy.page {
 <style lang="less">
 .type-con {
     .hd {
-        position: relative;
-        padding-bottom: 22rpx;
-        background-color: #000;
-        overflow: hidden;
-        .title {
-            padding: 20rpx 20rpx 30rpx 20rpx;
-            height: 80rpx;
-            line-height: 80rpx;
-            font-size: 50rpx;
-            color: #fff;
-        }
-        .bg {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 22rpx;
-            width: 100%;
-        }
+        padding: 30rpx 20rpx;
+        font-size: 52rpx;
+        line-height: 60rpx;
+        color: #4A4A4A;
     }
     .bottm-line {
         margin-top: 40rpx;

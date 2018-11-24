@@ -1,242 +1,219 @@
 <template>
 <view class="home-con">
-    <view class="hd">
-        <view class="nav-box">
-            <view class="item {{ selectedNav === item.id ? 'active' : '' }}" wx:for="{{ navList }}" @tap="navItemTap('{{ item.id }}')" wx:key="{{ item.id }}">{{ item.name }}</view>
-        </view>
-        <view class="search-box">
-            <view class="search" @tap="searchTap">
-                <image class="icon" src="../../static/img/icon-search.png"></image>
-                <text>搜索黑料</text>
-            </view>
-        </view>
-        <image class="bg" src="../../static/img/hd-bg.png"></image>
-    </view>
     <view class="bd">
         <repeat for="{{ listData }}" item="item" key="item.id">
             <blockinfo :info="item" :islist="true"></blockinfo>
         </repeat>
     </view>
     <!-- <view class="bottm-line">总该有底线</view> -->
-    <view class="bottom-bar">
-        <view class="item active"><image src="../../static/img/icon-home.png"></image></view>
-        <navigator url="/pages/mine/index" class="item" open-type="redirect"><image src="../../static/img/icon-user.png"></image></navigator>
-    </view>
+    <navigator class="publish-btn" url="/pages/mine/publish">爆料</navigator>
+    <navigator class="mine-btn" url="/pages/mine/index">我的</navigator>
 </view>
 </template>
 
 <script>
-import wepy from 'wepy';
-import BlockInfo from '../../components/blockinfo';
-import fetch from '../../utils/fetch';
+import wepy from "wepy";
+import BlockInfo from "../../components/blockinfo";
+import fetch from "../../utils/fetch";
 
 export default class Index extends wepy.page {
-    config = {
-        navigationBarTitleText: '网黑',
-        enablePullDownRefresh: true
-    };
-    components = {
-        blockinfo: BlockInfo
-    };
+  config = {
+    navigationBarTitleText: "网黑",
+    enablePullDownRefresh: true
+  };
+  components = {
+    blockinfo: BlockInfo
+  };
 
-    data = {
-        navList: [
-            { id: 0, name: '最新' },
-            { id: 1, name: '热门' }
-        ],
-        selectedNav: 0,
-        page: 1,
-        listData: []
-    };
+  data = {
+    page: 1,
+    listData: []
+  };
 
-    onLoad() {
-        this.getListData();
+  onLoad() {
+    this.getListData();
+  }
+
+  computed = {};
+
+  methods = {
+    searchTap: () => {
+      wx.navigateTo({
+        url: "/pages/search/index"
+      });
     }
+  };
 
-    computed = {
-
+  onShareAppMessage() {
+    return {
+      title: "网黑 | 天天看黑料",
+      path: "pages/home/index"
     };
+  }
 
-    methods = {
-        navItemTap: id => {
-            this.selectedNav = id;
-            this.getListData(true);
-        },
-        searchTap: () => {
-            wx.navigateTo({
-				url: '/pages/search/index'
-			});
-        },
-    };
+  onPullDownRefresh() {
+    wepy.showNavigationBarLoading();
+    this.getListData(true, () => {
+      wepy.stopPullDownRefresh();
+      wepy.hideNavigationBarLoading();
+    });
+  }
 
-    onShareAppMessage() {
-        return {
-            title: '网黑 | 天天看黑料',
-            path: 'pages/home/index'
-        }
-    }
-
-    onPullDownRefresh() {
-        wepy.showNavigationBarLoading();
-        this.getListData(true, () => {
-            wepy.stopPullDownRefresh();
-            wepy.hideNavigationBarLoading();
+  onReachBottom() {
+    this.getListData(false, res => {
+      if (res && res.data && res.data.data.length == 0) {
+        wx.showToast({
+          title: "没有更多了",
+          icon: "none"
         });
+      }
+    });
+  }
+
+  getListData(refresh, cb) {
+    wx.showLoading({
+      title: "加载中"
+    });
+
+    if (refresh) {
+      this.page = 1;
     }
 
-    onReachBottom() {
-        this.getListData(false, res => {
-            if (res && res.data && res.data.data.length == 0) {
-                wx.showToast({
-                    title: '没有更多了',
-                    icon: 'none'
-                })
-            }
-        })
-    }
-
-    getListData(refresh, cb) {
-        wx.showLoading({
-            title: '加载中'
-        });
-
-        if (refresh) {
-            this.page = 1;
+    fetch.get(
+      {
+        url: "v1/articles",
+        data: {
+          q: "",
+          page: this.page++,
+          f: this.selectedNav,
+          t: ""
+        }
+      },
+      res => {
+        wx.hideLoading();
+        if (res && res.statusCode === 200) {
+          this.listData = refresh
+            ? res.data.data
+            : [...this.listData, ...res.data.data];
+          this.$apply();
+        } else {
+          wx.showToast({
+            title: "加载失败",
+            icon: "none"
+          });
         }
 
-        fetch.get({
-            url: 'v1/articles',
-            data: {
-                q: '',
-                page: this.page++,
-                f: this.selectedNav,
-                t: ''
-            }
-        }, res => {
-            wx.hideLoading();
-            if (res && res.statusCode === 200) {
-                this.listData = refresh ? res.data.data : [...this.listData, ...res.data.data];
-                this.$apply();
-            }else {
-                wx.showToast({
-                    title: '加载失败',
-                    icon: 'none'
-                });
-            }
-
-            cb && cb(res);
-        })
-    }
+        cb && cb(res);
+      }
+    );
+  }
 }
 </script>
 
 <style lang="less">
 .home-con {
-  padding-bottom: 150rpx;
-  .hd {
-    position: relative;
-    padding-bottom: 22rpx;
-    background-color: #000;
-    overflow: hidden;
-    .nav-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 80rpx;
-      .item {
+    padding-bottom: 150rpx;
+    background-color: #e7e7e7;
+    .hd {
         position: relative;
-        padding: 10rpx 15rpx;
-        margin: 0 20rpx;
-        font-size: 28rpx;
-        color: #fff;
-        transition: all 0.3s linear;
-      }
-      .item.active:before {
-        position: absolute;
-        content: "";
-        left: 0;
-        right: 0;
-        height: 10rpx;
-        bottom: -10rpx;
-        border-radius: 10rpx;
-        background: linear-gradient(to right, #fff, #c0c0c0);
-        transition: all 0.3s linear;
-        transform: scale(0);
-      }
-      .item.active:before {
-        transform: scale(1);
-      }
-    }
-    .search-box {
-      padding: 30rpx 20rpx;
-      .search {
+        padding-bottom: 22rpx;
+        background-color: #000;
+        overflow: hidden;
+        .nav-box {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 70rpx;
-        line-height: 70rpx;
-        font-size: 26rpx;
-        color: #9b9b9b;
-        text-align: center;
-        background-color: #fff;
-        border-radius: 10rpx;
-        .icon {
-          margin-right: 8rpx;
-          width: 32rpx;
-          height: 32rpx;
+        height: 80rpx;
+        .item {
+            position: relative;
+            padding: 10rpx 15rpx;
+            margin: 0 20rpx;
+            font-size: 28rpx;
+            color: #fff;
+            transition: all 0.3s linear;
         }
-      }
+        .item.active:before {
+            position: absolute;
+            content: "";
+            left: 0;
+            right: 0;
+            height: 10rpx;
+            bottom: -10rpx;
+            border-radius: 10rpx;
+            background: linear-gradient(to right, #fff, #c0c0c0);
+            transition: all 0.3s linear;
+            transform: scale(0);
+        }
+        .item.active:before {
+            transform: scale(1);
+        }
     }
-    .bg {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 22rpx;
-      width: 100%;
+    .search-box {
+        padding: 30rpx 20rpx;
+        .search {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 70rpx;
+            line-height: 70rpx;
+            font-size: 26rpx;
+            color: #9b9b9b;
+            text-align: center;
+            background-color: #fff;
+            border-radius: 10rpx;
+            .icon {
+            margin-right: 8rpx;
+            width: 32rpx;
+            height: 32rpx;
+            }
+        }
+        }
+        .bg {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 22rpx;
+        width: 100%;
+        }
     }
-  }
-  .bottm-line {
-    margin-top: 40rpx;
-    height: 80rpx;
-    line-height: 80rpx;
-    font-size: 26rpx;
-    color: #000;
-    text-align: center;
-  }
-  .bottom-bar {
-    position: fixed;
-    display: flex;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 150rpx;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.5));
-    .item {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0 20rpx;
-      width: 64rpx;
-      height: 64rpx;
-      line-height: 64rpx;
-      text-align: center;
-      border-radius: 50%;
-      background-color: #76777a;
-      color: #fff;
-      box-shadow: 0 0 10px 2px rgba(48, 56, 65, 0.7);
-      transition: all 0.4s linear;
-      image {
-        width: 35rpx;
-        height: 35rpx;
-      }
+    .bottm-line {
+        margin-top: 40rpx;
+        height: 80rpx;
+        line-height: 80rpx;
+        font-size: 26rpx;
+        color: #000;
+        text-align: center;
     }
-    .item.active {
-      background-color: #000;
-      transform: scale(1.2);
+    .mine-btn {
+        position: fixed;
+        right: 30rpx;
+        bottom: 50rpx;
+        height: 100rpx;
+        width: 100rpx;
+        line-height: 100rpx;
+        font-size: 26rpx;
+        color: #fff;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 50%;
+        background-color: #303841;
+        box-shadow: 0 0 10rpx #303841;
+        }
+    .publish-btn {
+        position: fixed;
+        right: 30rpx;
+        bottom: 170rpx;
+        height: 100rpx;
+        width: 100rpx;
+        line-height: 100rpx;
+        font-size: 26rpx;
+        color: #fff;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 50%;
+        background-color: #ff595e;
+        box-shadow: 0 0 10rpx #ff595e;
     }
-  }
 }
 </style>

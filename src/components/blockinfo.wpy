@@ -4,7 +4,6 @@
 		<view class="item-hd">
 			<image class="face" src="{{ info.member.avatar }}"></image>
 			<text class="name">{{ info.member.name }}</text>
-			<view class="tag" wx:if="{{ info.quality === 1 }}">精选</view>
 		</view>
 		<view wx:if="{{ islist === true }}" class="item-desc">
 			<text>{{ info.summary }}</text>
@@ -16,6 +15,8 @@
 			<image class="img" @tap="imgTap" wx:for="{{ img_list }}" wx:key="item" src="{{item}}" data-src="{{item}}" mode="aspectFill"></image>
 		</scroll-view>
 		<view class="item-ft">
+			<text class="text" wx:if="{{ info.quality === 1 }}">精选</text>
+			<text class="dot" wx:if="{{ info.quality === 1 }}">·</text>
 			<text class="text">{{ info.likes }} 赞同</text>
 			<text class="dot">·</text>
 			<text class="text">{{ info.comments }} 评论</text>
@@ -27,22 +28,23 @@
 		<view class="item-hd">
 			<image class="face" src="{{ img_server + info.member.avatar }}"></image>
 			<text class="name">{{ info.member.name }}</text>
-			<view class="tag" wx:if="{{ info.quality === 1 }}">精选</view>
 		</view>
 		<view wx:if="{{ islist === true }}" class="item-bd">
 			<text class="content">{{ info.title }}</text>
-			<image class="img" src="{{ img_server + info.cover_image }}"></image>
+			<image class="img" src="{{ img_server + info.cover_image }}" model="aspectFill"></image>
 		</view>
 		<navigator wx:else class="item-bd" url="/pages/home/detail?id={{ info.id }}">
 			<text class="content">{{ info.title }}</text>
-			<image class="img" src="{{ img_server + info.cover_image }}"></image>
+			<image class="img" src="{{ img_server + info.cover_image }}" model="aspectFill"></image>
 		</navigator>
 		<view class="item-ft">
+			<text class="text red" wx:if="{{ info.quality === 1 }}">精选</text>
+			<text class="dot" wx:if="{{ info.quality === 1 }}">·</text>
 			<text class="text">{{ info.likes }} 赞同</text>
 			<text class="dot">·</text>
 			<text class="text">{{ info.comments }} 评论</text>
-			<text class="dot">·</text>
-			<navigator class="link" url="/pages/home/type?id={{ info.topic_id }}&name={{ info.topic }}">#{{ info.topic }}#</navigator>
+			<text class="dot" wx:if="{{ info.topic !== '' }}">·</text>
+			<navigator wx:if="{{ info.topic !== '' }}" class="link" url="/pages/home/type?id={{ info.topic_id }}&name={{ info.topic }}">#{{ info.topic }}#</navigator>
 		</view>
 	</view>
 </view>
@@ -97,14 +99,15 @@ export default class BlockInfo extends wepy.component {
 <style lang="less">
 .block {
 	.item {
-		padding: 20rpx;
+		margin-bottom: 5px;
+		padding: 10rpx 20rpx;
 		background-color: #fff;
 		border-bottom: 1rpx solid #E9E9E9;
 		.item-hd {
-			padding: 10rpx 0;
+			padding: 5rpx 0;
 			.face {
-				width: 60rpx;
-				height: 60rpx;
+				width: 35rpx;
+				height: 35rpx;
 				border-radius: 50%;
 				margin-right: 15rpx;
 				vertical-align: middle;
@@ -112,7 +115,7 @@ export default class BlockInfo extends wepy.component {
 			}
 			.name {
 				font-size: 24rpx;
-				color: #000;
+				color: #9B9B9B;
 				line-height: 60rpx;
 				vertical-align: middle;
 			}
@@ -129,21 +132,22 @@ export default class BlockInfo extends wepy.component {
 			}
 		}
 		.item-bd {
-			padding: 20rpx 0;
+			padding: 7rpx 0;
 			display: flex;
 			align-items: flex-start;
 			justify-content: space-between;
 			.content {
 				flex: 1;
-				padding-right: 20rpx;
+				padding-right: 25rpx;
 				font-size: 28rpx;
 				color: #000;
 				line-height: 42rpx;
 				text-align: justify;
 			}
 			.img {
-				width: 240rpx;
-				height: 156rpx;
+				width: 200rpx;
+				height: 130rpx;
+				border-radius: 10rpx;
 			}
 		}
 		.item-desc {
@@ -171,12 +175,16 @@ export default class BlockInfo extends wepy.component {
 			}
 		}
 		.item-ft {
-			padding: 20rpx 0;
+			padding: 13rpx 0;
 			font-size: 24rpx;
 			color: #9B9B9B;
 			line-height: 32rpx;
+			.red {
+				color: #FF595E;
+				font-weight: bold;
+			}
 			.dot {
-				padding: 0 8rpx;
+				padding: 0 10rpx;
 			}
 			.link {
 				display: inline-block;

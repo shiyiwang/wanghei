@@ -26,6 +26,13 @@
 				<image class="article-img" src="{{ img_server + detail.member.avatar }}"></image>
 				<text class="author">{{ detail.member.name }}</text>
 				<view class="article-title">{{ detail.title }}</view>
+				<view class="like-box">
+					<text class="text">{{ detail.likes }} 赞同</text>
+					<text class="dot">·</text>
+					<text class="text">{{ detail.comments }} 评论</text>
+					<text class="dot" wx:if="{{ detail.topic !== '' }}">·</text>
+					<navigator wx:if="{{ detail.topic !== '' }}" class="link" url="/pages/home/type?id={{ detail.topic_id }}&name={{ detail.topic }}">#{{ detail.topic }}#</navigator>
+				</view>
 				<view class="tag" wx:if="{{ detail.quality === 1 }}">精选</view>
 			</view>
 			<view class="article-bd">
@@ -54,9 +61,21 @@
 		</view>
 	</view>
 	<view class="bottom-bar" wx:if="{{ navType === 'detail' }}">
-		<view class="bar-item" bindtap="likeTap">{{ isLike ? '取消赞同' : '表示赞同' }} · {{ likes }}</view>
-		<view class="bar-item" bindtap="showComment">看下评论 · {{ detail.comments }}</view>
-		<view class="bar-item" bindtap="collectTap">加入收藏 · 100</view>
+		<view class="bar-item" bindtap="likeTap">
+			<image wx:if="{{ isLike === true }}" class="icon" src="../../static/img/icon-like-new-color.png"></image>
+			<image wx:else class="icon" src="../../static/img/icon-like-new.png"></image>
+			赞同
+		</view>
+		<view class="bar-item" bindtap="showComment">
+			<image class="icon" src="../../static/img/icon-comment-new.png"></image>
+			评论
+		</view>
+		<view class="bar-item" >
+			<image class="icon" src="../../static/img/icon-share.png"></image>
+				转发
+			<button open-type="share">
+			</button>
+		</view>
 	</view>
 	<view class="bottom-reply" wx:if="{{ navType === 'comment' }}" bindtap="goComment">
 		<view class="reply-text">我也说两句…</view>
@@ -168,13 +187,6 @@ export default class Detail extends wepy.page {
 					});
 				}
 			})
-		},
-		collectTap: () => {
-			wx.showToast({
-				title: '功能待开放',
-				duration: 2000,
-				icon: 'none'
-			});
 		}
 	};
 	
@@ -240,7 +252,7 @@ export default class Detail extends wepy.page {
 			bottom: 8rpx;
 			left: 0;
 			right: 0;
-			height: 6rpx;
+			height: 4rpx;
 			background-color: #000;
 			box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
 		}
@@ -308,13 +320,13 @@ export default class Detail extends wepy.page {
 				justify-content: center;
 				padding: 20rpx;
 				.article-img {
-					width: 50rpx;
-					height: 50rpx;
+					width: 70rpx;
+					height: 70rpx;
 				}
 				.author {
 					padding: 10rpx;
-					font-size: 24rpx;
-					color: #000;
+					font-size: 26rpx;
+					color: #9B9B9B;
 					line-height: 36rpx;
 				}
 				.article-title {
@@ -325,7 +337,7 @@ export default class Detail extends wepy.page {
 					text-align: center;
 				}
 				.tag {
-					margin-top: 30rpx;
+					margin-top: 15rpx;
 					padding: 12rpx 24rpx;
 					font-size: 22rpx;
 					color:#fff;
@@ -333,6 +345,22 @@ export default class Detail extends wepy.page {
 					border-radius: 10rpx;
 					background: radial-gradient(circle,#585858,#000000);;
 					box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.5);
+				}
+				.like-box {
+					padding: 13rpx 0;
+					font-size: 24rpx;
+					color: #9B9B9B;
+					line-height: 32rpx;
+					.red {
+						color: #FF595E;
+						font-weight: bold;
+					}
+					.dot {
+						padding: 0 10rpx;
+					}
+					.link {
+						display: inline-block;
+					}
 				}
 			}
 			.article-bd {
@@ -371,14 +399,37 @@ export default class Detail extends wepy.page {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 80rpx;
-		line-height: 80rpx;
-		background-color: #EFEFEF;
+		background-color: #FDFDFD;
+		padding: 25rpx 0;
+		border-top: 1rpx solid #E7E7E7;
 		.bar-item {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 			flex: 1;
-			font-size: 24rpx;
+			font-size: 26rpx;
+			line-height: 50rpx;
 			color: #4A4A4A;
 			text-align: center;
+			border-right: 1rpx solid #D2D2D2;
+			.icon {
+				margin-right: 10rpx;
+				display: inline-block;
+				height: 40rpx;
+				width: 40rpx;
+			}
+			button {
+				position: absolute;
+				top: 0;
+				right: 0;
+				left: 0;
+				bottom: 0;
+				opacity: 0;
+			}
+		}
+		.bar-item:last-child {
+			border-right: 0;
 		}
 	}
 	.bottom-reply {

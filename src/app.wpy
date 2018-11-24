@@ -12,14 +12,15 @@ export default class extends wepy.app {
             'pages/search/index',
             'pages/mine/index',
             'pages/mine/bindmobile',
+            'pages/mine/publish',
             'pages/article/publish',
         ],
         window: {
-            backgroundTextStyle: 'light',
-            backgroundColor: '#000000',
-            navigationBarBackgroundColor: '#000000',
+            backgroundTextStyle: 'dark',
+            backgroundColor: '#fff',
+            navigationBarBackgroundColor: '#fff',
             navigationBarTitleText: '网黑',
-            navigationBarTextStyle: 'white'
+            navigationBarTextStyle: 'black'
         }
     }
 
