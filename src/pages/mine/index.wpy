@@ -34,6 +34,7 @@
 	<view class="bd" wx:else>
 		<view class="no-login-text">您还没有登录呢</view>
 	</view>
+	<ad unit-id="adunit-5dba84b113c8bdc8" style="margin-top: 400rpx;"></ad>
 	<navigator class="publish-btn" url="/pages/mine/publish">爆料</navigator>
 </view>
 </template>

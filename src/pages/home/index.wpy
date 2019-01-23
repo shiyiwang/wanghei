@@ -1,7 +1,8 @@
 <template>
 <view class="home-con">
     <view class="bd">
-        <repeat for="{{ listData }}" item="item" key="item.id">
+        <repeat for="{{ listData }}" item="item" index="index" key="item.id">
+            <ad unit-id="adunit-cbdd523cb97ca66c" wx:if="{{ index === 4}}" style="margin-bottom: 10rpx;"></ad>
             <blockinfo :info="item" :islist="true"></blockinfo>
         </repeat>
     </view>

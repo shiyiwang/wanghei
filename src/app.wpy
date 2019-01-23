@@ -50,7 +50,6 @@ export default class extends wepy.app {
                         success: res2 => {
                             this.globalData.userInfo = res2.userInfo;
                             cb && cb(res2.userInfo);
-                            console.log(this.globalData);
                         }
                     })
                 }
